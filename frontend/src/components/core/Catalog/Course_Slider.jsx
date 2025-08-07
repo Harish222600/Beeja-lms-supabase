@@ -22,10 +22,10 @@ function Course_Slider({ Courses }) {
           <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 xs:gap-4 sm:gap-6 lg:gap-8">
             {/* Enhanced Skeleton Loading */}
             {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-richblack-700 rounded-xl overflow-hidden shadow-lg w-[280px] xs:w-[280px] sm:w-[330px] h-[380px] xs:h-[400px] sm:h-[420px]">
+              <div key={index} className="flex justify-center">
+                <div className="animate-pulse bg-richblack-700 rounded-xl overflow-hidden shadow-lg w-full max-w-[280px] xs:max-w-[300px] sm:max-w-[320px] lg:max-w-[340px] h-[380px] xs:h-[400px] sm:h-[420px]">
                   {/* Thumbnail Skeleton */}
-                  <div className="h-36 xs:h-40 sm:h-44 bg-richblack-600"></div>
+                  <div className="h-36 xs:h-40 sm:h-44 bg-richblack-600 rounded-t-xl"></div>
                   
                   {/* Content Skeleton */}
                   <div className="p-3 xs:p-4 sm:p-5 space-y-2 xs:space-y-3 sm:space-y-4">

@@ -52,7 +52,7 @@ const About = () => {
               initial='hidden'
               whileInView={'show'}
               viewport={{ once: false, amount: 0.1 }}
-              className="mx-auto mt-3 text-center text-base font-medium text-richblack-300 lg:w-[95%]">
+              className="mx-auto mt-3 text-center text-base font-medium text-white lg:w-[95%]">
               BeejaAcademy is at the forefront of driving innovation in online
               education. We're passionate about creating a brighter future by
               offering cutting-edge courses, leveraging emerging technologies,
@@ -70,15 +70,15 @@ const About = () => {
         </div>
       </section>
 
-      <section className="border-b border-richblack-700">
-        <div className="mx-auto flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-richblack-500">
+      <section>
+        <div className="mx-auto flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-white">
           <div className="h-[100px] "></div>
           <Quote />
         </div>
       </section>
 
       <section>
-        <div className="mx-auto flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-richblack-500">
+        <div className="mx-auto flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-white">
           <div className="flex flex-col items-center gap-10 lg:flex-row justify-between">
             <motion.div
               variants={fadeIn('right', 0.1)}
@@ -89,16 +89,16 @@ const About = () => {
               <h1 className="bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCB045] bg-clip-text text-4xl font-semibold text-transparent lg:w-[70%] ">
                 Smart Learning. Bright Earning. Your Future, Online
               </h1>
-              <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
+              <p className="text-base font-medium text-white lg:w-[95%]">
                 1. Smart Learning: Embrace online education for personalized, accessible, and interactive
                 learning experiences. Unlock knowledge from anywhere, anytime.
               </p>
-              <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
+              <p className="text-base font-medium text-white lg:w-[95%]">
                 2. Bright Earning: Seize online opportunities for career growth and financial success. Acquire
                 skills, build expertise, and open doors to a prosperous future with flexible, online learning
                 pathways.
               </p>
-              <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
+              <p className="text-base font-medium text-white lg:w-[95%]">
                 Embrace Smart Learning, Bright Earning: Go Online! Elevate your skills with flexible, accessible
                 courses. Unleash your potential, shape a brighter future, and open doors to rewarding
                 opportunities in the digital era.
@@ -141,7 +141,6 @@ const About = () => {
               <TeamCard />
 
             </motion.div>
-            <div style={{ height: '.5px', backgroundColor: 'gray', width: '100%' }} />
           </div>
 
           {/* Benefits for Employers Section */}
@@ -159,7 +158,7 @@ const About = () => {
               <h1 className="bg-gradient-to-b from-[#FF512F] to-[#F09819] bg-clip-text text-4xl font-semibold text-transparent lg:w-[70%] ">
                 Our Vision
               </h1>
-              <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
+              <p className="text-base font-medium text-white lg:w-[95%]">
                 At Beeja, we aspire to ignite a lifelong passion for learning by providing transformative, accessible, and personalized educational experiences. Through our innovative platform, we empower learners to unlock their potential, adapt to the evolving digital landscape, and shape a brighter future. We cultivate a community that values curiosity, growth, and continuous improvement. We aim to make meaningful learning a part of everyday life
               </p>
             </div>
@@ -168,11 +167,11 @@ const About = () => {
               <h1 className="bg-gradient-to-b from-[#1FA2FF] via-[#12D8FA] to-[#A6FFCB] text-transparent bg-clip-text text-4xl font-semibold lg:w-[70%] ">
                 Our Mission
               </h1>
-              <p className="text-base font-medium text-richblack-300 lg:w-[95%]">
+              <p className="text-base font-medium text-white lg:w-[95%]">
                 At Beeja Academy, we are dedicated to fostering a culture of continuous learning.
                 Our mission is to empower individuals by providing accessible,
                 high-quality education that evolves with the ever-changing demands of the industry.
-                Through innovative teaching methods, real-world projects, and a supportive community,
+                Through innovative methods, real-world projects, and a supportive community,
                 we aim to transform learners into industry-ready professionals equipped with the skills and
                 confidence to excel in their careers.
               </p>

@@ -276,7 +276,7 @@ const ModernNavbar = () => {
 
         {/* Nav Links - visible for only large devices */}
         <motion.ul 
-          className="hidden lg:flex items-center gap-x-4 text-richblack-25"
+          className="hidden lg:flex items-center gap-x-4 text-white"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
@@ -293,14 +293,14 @@ const ModernNavbar = () => {
                   className={`relative flex cursor-pointer items-center gap-1 transition-all duration-300 hover:scale-105 catalog-dropdown-container ${
                     matchRoute("/catalog/:catalogName")
                       ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-white rounded-lg p-1.5 px-3 shadow-[0_4px_20px_rgba(20,184,166,0.3)]"
-                      : "text-richblack-25 rounded-lg p-1.5 px-3 hover:bg-white/10 hover:backdrop-blur-sm"
+                      : "text-white font-semibold rounded-lg p-1.5 px-3 hover:bg-white/10 hover:backdrop-blur-sm hover:text-white"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     setCatalogDropdownOpen(!catalogDropdownOpen);
                   }}
                 >
-                  <p className="text-sm font-medium">{link.title}</p>
+                  <p className="text-sm font-bold">{link.title}</p>
                   <motion.div
                     animate={{ rotate: catalogDropdownOpen ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
@@ -369,10 +369,10 @@ const ModernNavbar = () => {
                 >
                   <Link to={link?.path}>
                     <p
-                      className={`text-sm font-medium transition-all duration-300 ${
+                      className={`text-sm font-bold transition-all duration-300 ${
                         matchRoute(link?.path)
                           ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-white rounded-lg p-1.5 px-3 shadow-[0_4px_20px_rgba(20,184,166,0.3)]"
-                          : "text-richblack-25 rounded-lg p-1.5 px-3 hover:bg-white/10 hover:backdrop-blur-sm"
+                          : "text-white font-semibold rounded-lg p-1.5 px-3 hover:bg-white/10 hover:backdrop-blur-sm hover:text-white"
                       }`}
                     >
                       {link.title}
@@ -391,10 +391,10 @@ const ModernNavbar = () => {
             whileHover={{ scale: 1.05 }}
           >
             <Link to="/free-courses">
-              <p className={`text-sm font-medium transition-all duration-300 ${
+              <p className={`text-sm font-bold transition-all duration-300 ${
                 matchRoute("/free-courses")
                   ? "bg-gradient-to-r from-teal-400 to-emerald-400 text-white rounded-lg p-1.5 px-3 shadow-[0_4px_20px_rgba(20,184,166,0.3)]"
-                  : "text-richblack-25 rounded-lg p-1.5 px-3 hover:bg-white/10 hover:backdrop-blur-sm"
+                  : "text-white font-semibold rounded-lg p-1.5 px-3 hover:bg-white/10 hover:backdrop-blur-sm hover:text-white"
               }`}>
                 Free Courses
               </p>
@@ -403,7 +403,7 @@ const ModernNavbar = () => {
 
           {/* Services Dropdown */}
           <motion.li 
-            className="relative flex cursor-pointer items-center gap-1 rounded-lg p-1.5 px-3 text-richblack-25 hover:bg-white/10 hover:backdrop-blur-sm transition-all duration-300 services-dropdown-container"
+            className="relative flex cursor-pointer items-center gap-1 rounded-lg p-1.5 px-3 text-white font-semibold hover:bg-white/10 hover:backdrop-blur-sm hover:text-white transition-all duration-300 services-dropdown-container"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
@@ -413,7 +413,7 @@ const ModernNavbar = () => {
               setServicesDropdownOpen(!servicesDropdownOpen);
             }}
           >
-            <span className="text-sm font-medium">Services</span>
+            <span className="text-sm font-bold">Services</span>
             <motion.div
               animate={{ rotate: servicesDropdownOpen ? 180 : 0 }}
               transition={{ duration: 0.3 }}
@@ -461,8 +461,8 @@ const ModernNavbar = () => {
               >
                 <motion.button 
                   onClick={handleLogin}
-                  className="rounded-lg border border-richblack-600 bg-richblack-800/80 backdrop-blur-sm px-3 py-1.5 text-richblack-100 text-sm font-medium transition-all duration-300 hover:bg-richblack-700 hover:border-richblack-500"
-                  whileHover={{ scale: 1.05, boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}
+                  className="rounded-lg border border-white/30 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-white text-sm font-bold transition-all duration-300 hover:bg-white/20 hover:border-white/50"
+                  whileHover={{ scale: 1.05, boxShadow: "0 4px 20px rgba(255,255,255,0.2)" }}
                   whileTap={{ scale: 0.95 }}
                 >
                   Log in
@@ -475,7 +475,7 @@ const ModernNavbar = () => {
               >
                 <motion.button 
                   onClick={handleSignup}
-                  className="rounded-lg bg-gradient-to-r from-teal-400 to-emerald-400 px-3 py-1.5 text-white text-sm font-medium transition-all duration-300 hover:from-teal-300 hover:to-emerald-300 shadow-lg"
+                  className="rounded-lg bg-gradient-to-r from-teal-400 to-emerald-400 px-3 py-1.5 text-white text-sm font-bold transition-all duration-300 hover:from-teal-300 hover:to-emerald-300 shadow-lg"
                   whileHover={{ scale: 1.05, boxShadow: "0 6px 25px rgba(20,184,166,0.4)" }}
                   whileTap={{ scale: 0.95 }}
                 >
