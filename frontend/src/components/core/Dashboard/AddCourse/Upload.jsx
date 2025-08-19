@@ -4,11 +4,20 @@ import { FiUploadCloud } from "react-icons/fi"
 import { useSelector } from "react-redux"
 import { uploadFile, ResumableUploader } from "../../../../utils/directUpload"
 import VideoUploadProgress from "../../../common/VideoUploadProgress"
+import { useUpload } from "../../../../contexts/UploadContext"
 
 
 
 export default function Upload({ name, label, register, setValue, errors, video = false, viewData = null, editData = null, setImageFile = null }) {
   const { token } = useSelector((state) => state.auth)
+  const { 
+    generateUploadId, 
+    registerUpload, 
+    unregisterUpload, 
+    isUploadCancelled,
+    getUploadStatus 
+  } = useUpload()
+  
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewSource, setPreviewSource] = useState("")
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
@@ -23,6 +32,8 @@ export default function Upload({ name, label, register, setValue, errors, video 
   const [uploadResult, setUploadResult] = useState(null)
   const [uploader, setUploader] = useState(null)
   const [uploadStatus, setUploadStatus] = useState('idle') // 'idle', 'uploading', 'completed', 'error', 'cancelled'
+  const [currentUploadId, setCurrentUploadId] = useState(null)
+  const abortControllerRef = useRef(null)
 
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0]
@@ -54,24 +65,53 @@ export default function Upload({ name, label, register, setValue, errors, video 
 
   // Reset upload state
   const resetUploadState = () => {
+    // Cancel any ongoing upload
+    if (currentUploadId) {
+      console.log('🚫 Cancelling ongoing upload:', currentUploadId)
+      unregisterUpload(currentUploadId)
+    }
+    
+    // Abort any ongoing fetch requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+    
     setIsUploading(false)
     setUploadProgress(0)
     setUploadError(null)
     setUploadResult(null)
     setUploadStatus('idle')
+    setCurrentUploadId(null)
+    
     if (uploader) {
       uploader.cancel()
       setUploader(null)
     }
   }
 
-  // Start file upload
+  // Start file upload with cancellation support
   const startUpload = async (file) => {
     try {
       console.log('🚀 Starting upload for:', file.name)
+      
+      // Create new upload session
+      const uploadId = generateUploadId()
+      const abortController = new AbortController()
+      
+      setCurrentUploadId(uploadId)
+      abortControllerRef.current = abortController
       setIsUploading(true)
       setUploadStatus('uploading')
       setUploadError(null)
+      
+      // Register upload with context
+      registerUpload(uploadId, abortController, {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        componentName: name
+      })
       
       const folder = video ? 'videos' : 'images'
       
@@ -82,17 +122,38 @@ export default function Upload({ name, label, register, setValue, errors, video 
         console.log('📦 Using resumable upload for large file')
         
         const resumableUploader = new ResumableUploader(file, folder, {
+          uploadId,
+          abortController,
           onProgress: (progressData) => {
+            // Check if upload was cancelled
+            if (isUploadCancelled(uploadId)) {
+              console.log('⚠️ Upload was cancelled, ignoring progress update')
+              return
+            }
+            
             setUploadProgress(progressData.progress)
             console.log('Upload progress:', progressData)
           },
           onError: (error) => {
+            // Check if upload was cancelled
+            if (isUploadCancelled(uploadId)) {
+              console.log('⚠️ Upload was cancelled, ignoring error')
+              return
+            }
+            
             console.error('Upload error:', error)
             setUploadError(error.message)
             setUploadStatus('error')
             setIsUploading(false)
+            unregisterUpload(uploadId)
           },
           onComplete: (result) => {
+            // Check if upload was cancelled
+            if (isUploadCancelled(uploadId)) {
+              console.log('⚠️ Upload was cancelled, ignoring completion')
+              return
+            }
+            
             console.log('Upload completed:', result)
             setUploadResult(result)
             setUploadStatus('completed')
@@ -101,6 +162,7 @@ export default function Upload({ name, label, register, setValue, errors, video 
             
             // Set the result URL in the form
             setValue(name, result.secure_url)
+            unregisterUpload(uploadId)
           }
         })
         
@@ -111,12 +173,26 @@ export default function Upload({ name, label, register, setValue, errors, video 
         console.log('🚀 Using direct upload for small file')
         
         const result = await uploadFile(file, folder, {
+          uploadId,
+          abortController,
           onProgress: (progressData) => {
+            // Check if upload was cancelled
+            if (isUploadCancelled(uploadId)) {
+              console.log('⚠️ Upload was cancelled, ignoring progress update')
+              return
+            }
+            
             if (progressData) {
               setUploadProgress(progressData.progress || 50) // Fallback progress for direct uploads
             }
           }
         })
+        
+        // Check if upload was cancelled before processing result
+        if (isUploadCancelled(uploadId)) {
+          console.log('⚠️ Upload was cancelled, not processing result')
+          return
+        }
         
         console.log('✅ Direct upload completed:', result)
         setUploadResult(result)
@@ -126,13 +202,26 @@ export default function Upload({ name, label, register, setValue, errors, video 
         
         // Set the result URL in the form
         setValue(name, result.secure_url)
+        unregisterUpload(uploadId)
       }
       
     } catch (error) {
-      console.error('❌ Upload failed:', error)
-      setUploadError(error.message)
-      setUploadStatus('error')
+      // Check if error is due to cancellation
+      if (error.name === 'AbortError' || error.message === 'Upload cancelled' || (currentUploadId && isUploadCancelled(currentUploadId))) {
+        console.log('🚫 Upload was cancelled')
+        setUploadStatus('cancelled')
+        setUploadError('Upload cancelled')
+      } else {
+        console.error('❌ Upload failed:', error)
+        setUploadError(error.message)
+        setUploadStatus('error')
+      }
+      
       setIsUploading(false)
+      
+      if (currentUploadId) {
+        unregisterUpload(currentUploadId)
+      }
     }
   }
 
@@ -343,14 +432,41 @@ export default function Upload({ name, label, register, setValue, errors, video 
     }
   }, [viewData, editData, video, selectedFile, token])
 
-  // Clean up object URLs on unmount
+  // Clean up object URLs and uploads on unmount
   useEffect(() => {
     return () => {
       if (previewSource && previewSource.startsWith('blob:')) {
         URL.revokeObjectURL(previewSource)
       }
+      
+      // Clean up any ongoing uploads when component unmounts
+      resetUploadState()
     }
   }, [previewSource])
+
+  // Expose cancellation method to parent components
+  useEffect(() => {
+    // Store reference to cancel function for external access
+    if (window.uploadCancellers) {
+      window.uploadCancellers[name] = () => {
+        console.log(`🚫 External cancellation requested for ${name}`)
+        resetUploadState()
+      }
+    } else {
+      window.uploadCancellers = { 
+        [name]: () => {
+          console.log(`🚫 External cancellation requested for ${name}`)
+          resetUploadState()
+        }
+      }
+    }
+    
+    return () => {
+      if (window.uploadCancellers) {
+        delete window.uploadCancellers[name]
+      }
+    }
+  }, [name])
 
   return (
     <div className="flex flex-col space-y-2">

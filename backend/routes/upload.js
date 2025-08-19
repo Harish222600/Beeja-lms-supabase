@@ -5,6 +5,8 @@ const {
   generateSignedUrl,
   handleUploadComplete,
   getUploadStatus,
+  cancelUpload,
+  cancelMultipleUploads,
   deleteUpload
 } = require('../controllers/upload');
 
@@ -25,6 +27,18 @@ router.post('/complete', auth, handleUploadComplete);
  * GET /api/v1/upload/status/:uploadId
  */
 router.get('/status/:uploadId', auth, getUploadStatus);
+
+/**
+ * Cancel ongoing upload
+ * POST /api/v1/upload/cancel/:uploadId
+ */
+router.post('/cancel/:uploadId', auth, cancelUpload);
+
+/**
+ * Cancel multiple uploads
+ * POST /api/v1/upload/cancel-multiple
+ */
+router.post('/cancel-multiple', auth, cancelMultipleUploads);
 
 /**
  * Delete uploaded file

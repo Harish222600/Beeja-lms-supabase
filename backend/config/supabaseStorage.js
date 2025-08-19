@@ -10,10 +10,10 @@ const STORAGE_BUCKETS = {
     CHAT: 'chat-files'
 };
 
-// File size limits (in bytes)
+// File size limits (in bytes) - Supabase Free Tier Compatible
 const FILE_SIZE_LIMITS = {
     IMAGE: 10 * 1024 * 1024,    // 10MB
-    VIDEO: 2 * 1024 * 1024 * 1024, // 2GB (with chunked upload support)
+    VIDEO: 50 * 1024 * 1024,    // 50MB (Supabase free tier limit - use chunked upload for larger files)
     DOCUMENT: 50 * 1024 * 1024, // 50MB
     PROFILE: 5 * 1024 * 1024    // 5MB
 };
@@ -88,8 +88,17 @@ const initializeStorageBuckets = async () => {
                         // Provide specific guidance for common errors
                         if (error.message.includes('row-level security policy')) {
                             console.log(`💡 RLS Policy Error: Please create bucket '${bucketName}' manually in Supabase Dashboard`);
-                        } else if (error.message.includes('maximum allowed size')) {
-                            console.log(`💡 Size Error: Please adjust file size limits for bucket '${bucketName}'`);
+                            console.log(`   - Go to Storage → Create Bucket → Set as Public`);
+                            console.log(`   - Then run the RLS policies from setupSupabaseBuckets.sql`);
+                        } else if (error.message.includes('maximum allowed size') || error.message.includes('exceeded')) {
+                            console.log(`💡 Size Error: Bucket '${bucketName}' file size limit exceeds Supabase free tier (50MB)`);
+                            console.log(`   - Supabase free tier allows max 50MB per file`);
+                            console.log(`   - Large files will use chunked upload automatically`);
+                            console.log(`   - Create bucket manually with 50MB limit or upgrade to Pro plan`);
+                        } else if (error.message.includes('service_role')) {
+                            console.log(`💡 Auth Error: Please check your SUPABASE_SERVICE_ROLE_KEY`);
+                            console.log(`   - Ensure you're using the service_role key, not the anon key`);
+                            console.log(`   - Get it from Supabase Dashboard → Settings → API`);
                         }
                     } else {
                         console.log(`✅ Created bucket: ${bucketName}`);
@@ -124,9 +133,12 @@ const initializeStorageBuckets = async () => {
                 }
             }
             
-            console.log('\n   3. Set appropriate file size limits and MIME types');
-            console.log('   4. Restart the server after creating buckets');
-            console.log('\n   📖 See SUPABASE_MIGRATION.md for detailed instructions');
+            console.log('\n   3. Set file size limits to 50MB (Supabase free tier limit)');
+            console.log('   4. Set appropriate MIME types for each bucket');
+            console.log('   5. Run the RLS policies from scripts/setupSupabaseBuckets.sql');
+            console.log('   6. Restart the server after creating buckets');
+            console.log('\n   📖 See SUPABASE_SETUP_GUIDE.md for detailed instructions');
+            console.log('   🔧 Or run: node scripts/setupSupabaseBuckets.sql in Supabase SQL Editor');
         } else {
             console.log('\n🎉 All storage buckets are ready!');
         }

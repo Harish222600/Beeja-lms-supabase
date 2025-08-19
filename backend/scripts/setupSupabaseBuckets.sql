@@ -1,16 +1,25 @@
 -- Supabase Storage Bucket Setup Script
 -- Run this in your Supabase SQL Editor
+-- Updated for Supabase Free Tier Compatibility (50MB max per file)
 
--- 1. Create storage buckets
+-- 1. Create storage buckets with free tier compatible limits
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES 
-  ('images', 'images', true, 52428800, ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']),
-  ('videos', 'videos', true, 1073741824, ARRAY['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo']),
+  ('images', 'images', true, 10485760, ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']),
+  ('videos', 'videos', true, 52428800, ARRAY['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-matroska', 'video/x-flv', 'video/x-ms-wmv', 'application/octet-stream']),
   ('documents', 'documents', true, 52428800, ARRAY['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']),
-  ('profiles', 'profiles', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']),
-  ('courses', 'courses', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']),
-  ('chat-files', 'chat-files', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'])
+  ('profiles', 'profiles', true, 5242880, ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']),
+  ('courses', 'courses', true, 10485760, ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']),
+  ('chat-files', 'chat-files', true, 10485760, ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'])
 ON CONFLICT (id) DO NOTHING;
+
+-- File size limits explanation:
+-- images: 10MB (10485760 bytes)
+-- videos: 50MB (52428800 bytes) - Supabase free tier limit, larger files use chunked upload
+-- documents: 50MB (52428800 bytes)
+-- profiles: 5MB (5242880 bytes)
+-- courses: 10MB (10485760 bytes)
+-- chat-files: 10MB (10485760 bytes)
 
 -- 2. Create RLS policies for public access
 -- Allow public read access to all buckets
